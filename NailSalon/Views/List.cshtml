@@ -1,0 +1,27 @@
+﻿@model List<NailSalon.Models.Booking>  
+
+<h2>Bookings</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nail Technician</th>
+            <th>Appointment</th>
+            <th>Customer</th>
+            <th>Service</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.Id</td>
+                <td>@booking.StaffName</td>
+                <td>@booking.Time</td>
+                <td>@booking.CustomerName</td>
+                <td>@booking.ServiceName</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,8 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using NailSalon.Models;
+using NailSalon.DataAccess;
+
+
 
 
 namespace NailSalon.DataAccess
+
 {
     public class ApplicationDbContext : DbContext
     {
