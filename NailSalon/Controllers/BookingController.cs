@@ -39,7 +39,7 @@ public class BookingsController : Controller
         return View(booking);
     }
 
-    // GET: Bookings/Edit/
+    // GET: Bookings/Edit
     public IActionResult Edit(int? id)
     {
         if (id == null)
@@ -57,7 +57,7 @@ public class BookingsController : Controller
         return View(booking);
     }
 
-    // POST: Bookings/Edit/
+    // POST: Bookings/Edit
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Edit(int id, [Bind("Id,StaffName,Time,CustomerName,ServiceName")] Booking booking)
@@ -90,7 +90,12 @@ public class BookingsController : Controller
         return View(booking);
     }
 
-    // GET: Bookings/Delete/
+    private bool BookingExists(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    // GET: Bookings/Delete
     public IActionResult Delete(int? id)
     {
         if (id == null)
@@ -107,20 +112,108 @@ public class BookingsController : Controller
         return View(booking);
     }
 
-    // POST: Bookings/Delete/
+    // POST: Users/Delete
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public IActionResult DeleteConfirmed(int id)
+    public IActionResult DeleteUserConfirmed(int id)
     {
-        var booking = _context.Bookings.Find(id);
-        _context.Bookings.Remove(booking);
+        var user = _context.Customers.Find(id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        
+        var hasBookings = _context.Bookings.Any(b => b.CustomerName == user.Name);
+
+        if (hasBookings)
+        {
+           
+            ModelState.AddModelError(string.Empty, "Cannot be deleted!");
+            return View("Delete", user);
+        }
+
+        _context.Customers.Remove(user);
         _context.SaveChanges();
-        return RedirectToAction(nameof(List));
+
+        return RedirectToAction(nameof(CustomerList));
     }
 
-    private bool BookingExists(int id)
+    // POST: Bookings/Delete
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteBookingConfirmed(int id)
     {
-        return _context.Bookings.Any(e => e.Id == id);
+        var booking = _context.Bookings.Find(id);
+
+        if (booking == null)
+        {
+            return NotFound();
+        }
+
+        var hasService = _context.Services.Any(s => s.Name == booking.ServiceName);
+
+        if (hasService)
+        {
+            
+            ModelState.AddModelError(string.Empty, "Cannot be deleted!");
+            return View("Delete", booking);
+        }
+        _context.Bookings.Remove(booking);
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(BookingList));
+    }
+
+    // POST: Services/Delete
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteServiceConfirmed(int id)
+    {
+        var service = _context.Services.Find(id);
+
+        if (service == null)
+        {
+            return NotFound();
+        }
+
+       
+        var hasBookings = _context.Bookings.Any(b => b.ServiceName == service.Name);
+
+        if (hasBookings)
+        {
+            
+            ModelState.AddModelError(string.Empty, "Cannot be deleted!");
+            return View("Delete", service);
+        }
+
+        
+        _context.Services.Remove(service);
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(ServiceList));
+    }
+
+    // GET: Bookings/CustomerList
+    public IActionResult CustomerList()
+    {
+        var customers = _context.Customers.ToList();
+        return View(customers);
+    }
+
+    // GET: Bookings/BookingList
+    public IActionResult BookingList()
+    {
+        var bookings = _context.Bookings.ToList();
+        return View(bookings);
+    }
+
+    // GET: Bookings/ServiceList
+    public IActionResult ServiceList()
+    {
+        var services = _context.Services.ToList();
+        return View(services);
     }
 
 
